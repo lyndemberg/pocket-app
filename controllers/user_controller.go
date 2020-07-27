@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -28,14 +29,30 @@ func userListAction(w http.ResponseWriter, r *http.Request) {
 }
 
 func userDetailsAction(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
-	idString, _ := strconv.Atoi(id)
-	user := userRepository.FindByID(idString)
-	json.NewEncoder(w).Encode(user)
+	idString := mux.Vars(r)["id"]
+	id, _ := strconv.Atoi(idString)
+	user, err := userRepository.FindByID(id)
+
+	if err != nil {
+		w.Header().Add("error", err.Error())
+		w.WriteHeader(http.StatusNotFound)
+	} else {
+		json.NewEncoder(w).Encode(user)
+	}
 }
 
 func userDeleteAction(w http.ResponseWriter, r *http.Request) {
+	idString := mux.Vars(r)["id"]
+	id, _ := strconv.Atoi(idString)
+	err := userRepository.DeleteByID(id)
 
+	if err != nil {
+		fmt.Fprint(w, err.Error())
+	} else {
+		fmt.Fprint(w, "User successfully deleted")
+	}
+
+	w.Header().Add("Content-Type", "text/plain")
 }
 
 func userCreateAction(w http.ResponseWriter, r *http.Request) {
@@ -43,11 +60,25 @@ func userCreateAction(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&userRequest)
 
 	user, err := userRepository.Create(userRequest)
-	if err == nil {
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Add("error", err.Error())
+	} else {
 		json.NewEncoder(w).Encode(user)
+		w.WriteHeader(http.StatusCreated)
 	}
 }
 
 func userUpdateAction(w http.ResponseWriter, r *http.Request) {
+	var userRequest model.User
+	json.NewDecoder(r.Body).Decode(&userRequest)
 
+	user, err := userRepository.Update(userRequest)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Header().Add("error", err.Error())
+	} else {
+		json.NewEncoder(w).Encode(user)
+		w.WriteHeader(http.StatusCreated)
+	}
 }

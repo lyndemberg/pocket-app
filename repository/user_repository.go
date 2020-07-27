@@ -53,15 +53,21 @@ func (urepo UserRepository) FindAll() []model.User {
 }
 
 //FindByID TODO comment
-func (urepo UserRepository) FindByID(id int) model.User {
+func (urepo UserRepository) FindByID(id int) (model.User, error) {
 	var u model.User
 
 	if urepo.connection != nil {
 		query := "SELECT id, name, email, username, password FROM users WHERE id = ?"
-		urepo.connection.QueryRow(query, id).Scan(&u.ID, &u.Name, &u.Email, &u.Username, &u.Password)
+		err := urepo.connection.QueryRow(query, id).Scan(&u.ID, &u.Name, &u.Email, &u.Username, &u.Password)
+
+		if err != nil {
+			return u, errors.New("User not found")
+		}
+
+		return u, nil
 	}
 
-	return u
+	return u, errors.New("No connection with database")
 }
 
 //Create TODO comment
@@ -70,23 +76,53 @@ func (urepo UserRepository) Create(user model.User) (model.User, error) {
 		sqlInsert := "INSERT INTO users (name, email, username, password) VALUES (?, ?, ?, ?)"
 		result, err := urepo.connection.Exec(sqlInsert, user.Name, user.Email, user.Username, user.Password)
 
-		lastID, _ := result.LastInsertId()
-		return urepo.FindByID(int(lastID)), err
+		affects, err := result.RowsAffected()
+
+		if err == nil && int(affects) > 0 {
+			lastID, _ := result.LastInsertId()
+			return urepo.FindByID(int(lastID))
+		}
+
+		return user, errors.New("Could not create user")
 	}
 
 	return user, errors.New("No connection with database")
 }
 
 //Update TODO comment
-// func (urepo UserRepository) Update(user model.User) (model.User, error) {
-// 	if urepo.connection != nil {
-// 		sqlUpdate := "UPDATE users SET name = ?, email = ?, username = ?, password = ? WHERE id = ?"
-// 		result, err := urepo.connection.Exec(sqlUpdate, user.Name, user.Email, user.Username, user.Password, user.ID)
+func (urepo UserRepository) Update(user model.User) (model.User, error) {
+	if urepo.connection != nil {
+		sqlUpdate := "UPDATE users SET name = ?, email = ?, username = ?, password = ? WHERE id = ?"
+		result, err := urepo.connection.Exec(sqlUpdate, user.Name, user.Email, user.Username, user.Password, user.ID)
 
-// 		affects, err := result.RowsAffected()
-// 		lastID, _ := result.LastInsertId()
-// 		return urepo.FindByID(int(lastID)), err
-// 	}
+		affects, err := result.RowsAffected()
 
-// 	return user, errors.New("No connection with database")
-// }
+		if err == nil && int(affects) > 0 {
+			lastID, _ := result.LastInsertId()
+			return urepo.FindByID(int(lastID))
+		}
+
+		return user, errors.New("Could not update user")
+	}
+
+	return user, errors.New("No connection with database")
+}
+
+//DeleteByID TODO comment
+func (urepo UserRepository) DeleteByID(id int) error {
+
+	if urepo.connection != nil {
+		sqlDelete := "DELETE FROM users WHERE id = ?"
+		result, err := urepo.connection.Exec(sqlDelete, id)
+
+		rowsAffected, err := result.RowsAffected()
+
+		if err == nil && int(rowsAffected) > 0 {
+			return nil
+		}
+
+		return errors.New("Could not delete user")
+	}
+
+	return errors.New("No connection with database")
+}
