@@ -12,7 +12,8 @@ func main() {
 	router := mux.NewRouter()
 	router = router.PathPrefix("/api").Subrouter()
 
-	controller.UserController(router.PathPrefix("/users").Subrouter())
+	controller.NewUserController().Handle(router.PathPrefix("/users").Subrouter())
+	controller.NewLoginController().Handle(router.PathPrefix("/login").Subrouter())
 
 	log.Println("Starting server on :8080")
 	log.Fatal(http.ListenAndServe(":8080", router))

@@ -126,3 +126,21 @@ func (urepo UserRepository) DeleteByID(id int) error {
 
 	return errors.New("No connection with database")
 }
+
+//FindByUsername TODO comment
+func (urepo UserRepository) FindByUsername(username string) (model.User, error) {
+	var u model.User
+
+	if urepo.connection != nil {
+		query := "SELECT id, name, email, username, password FROM users WHERE username = ?"
+		err := urepo.connection.QueryRow(query, username).Scan(&u.ID, &u.Name, &u.Email, &u.Username, &u.Password)
+
+		if err != nil {
+			return u, fmt.Errorf("User not found with username = %s", username)
+		}
+
+		return u, nil
+	}
+
+	return u, errors.New("No connection with database")
+}
