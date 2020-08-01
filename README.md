@@ -24,6 +24,7 @@ GET /api/users
 ```
 ```
 POST /api/users
+Content-Type: application/json
 {
     "name": "John Doe",
     "email": "johndoe@gmail.com",
@@ -33,6 +34,7 @@ POST /api/users
 ```
 ```
 PUT /api/users
+Content-Type: application/json
 {
     "id":   "453"
     "name": "John Doe update",
@@ -50,9 +52,8 @@ DELETE /api/users/{id}
 
 #### Authentication endpoint
 ```
-POST /login
-{
-    "username": "John Doe",
-    "password": "johndoe@gmail.com"
-}
+POST /login 
+Content-Type: multipart/form-data
+username=johndoe
+password=johndoe@gmail.com
 ```
