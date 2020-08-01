@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"log"
 
-	model "github.com/lyndemberg/pocket-app/models"
-	util "github.com/lyndemberg/pocket-app/util"
+	"github.com/lyndemberg/pocket-app/model"
+	"github.com/lyndemberg/pocket-app/util"
 )
 
 //UserRepository TODO
