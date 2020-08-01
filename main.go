@@ -15,6 +15,7 @@ func main() {
 
 	controller.NewLoginController().Handle(router.PathPrefix("/login").Subrouter())
 	controller.NewUserController().Handle(apiRouter.PathPrefix("/users").Subrouter())
+
 	router.Use(security.AuthorizationMiddleware)
 
 	log.Println("Starting server on :8080")

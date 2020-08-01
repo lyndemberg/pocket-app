@@ -35,17 +35,17 @@ func (control LoginController) executeLogin(w http.ResponseWriter, r *http.Reque
 	_, isLogicError := err.(util.LogicError)
 
 	if err != nil && !isLogicError {
-		w.WriteHeader(http.StatusInternalServerError)
 		w.Header().Add("error", "There was a problem signing in")
+		w.WriteHeader(http.StatusInternalServerError)
 	} else if err != nil && isLogicError {
-		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Add("error", "Check your credentials")
+		w.WriteHeader(http.StatusBadRequest)
 	} else {
 		// user exists
 		passwordIsCorrect := security.CheckPassword(passwordRequest, user.Password)
 		if !passwordIsCorrect {
-			w.WriteHeader(http.StatusBadRequest)
 			w.Header().Add("error", "Check your credentials")
+			w.WriteHeader(http.StatusBadRequest)
 		} else {
 			// generate token
 			token, _ := security.GenerateToken(user.ID)

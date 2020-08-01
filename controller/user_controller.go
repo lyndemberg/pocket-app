@@ -57,13 +57,13 @@ func (control UserController) userDeleteAction(w http.ResponseWriter, r *http.Re
 	id, _ := strconv.Atoi(idString)
 	err := control.userRepository.DeleteByID(id)
 
+	w.Header().Add("Content-Type", "text/plain")
+
 	if err != nil {
 		fmt.Fprint(w, err.Error())
 	} else {
 		fmt.Fprint(w, "User successfully deleted")
 	}
-
-	w.Header().Add("Content-Type", "text/plain")
 }
 
 func (control UserController) userCreateAction(w http.ResponseWriter, r *http.Request) {
@@ -72,17 +72,17 @@ func (control UserController) userCreateAction(w http.ResponseWriter, r *http.Re
 
 	hashedPassword, errHashPassword := security.PasswordToHash(userRequest.Password)
 	if errHashPassword != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		w.Header().Add("error", "There was a problem processing the user registration")
+		w.WriteHeader(http.StatusInternalServerError)
 	} else {
 		userRequest.Password = hashedPassword
 		user, err := control.userRepository.Create(userRequest)
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
 			w.Header().Add("error", err.Error())
+			w.WriteHeader(http.StatusBadRequest)
 		} else {
-			w.WriteHeader(http.StatusCreated)
 			json.NewEncoder(w).Encode(user)
+			w.WriteHeader(http.StatusCreated)
 		}
 	}
 }
@@ -93,8 +93,8 @@ func (control UserController) userUpdateAction(w http.ResponseWriter, r *http.Re
 
 	user, err := control.userRepository.Update(userRequest)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
 		w.Header().Add("error", err.Error())
+		w.WriteHeader(http.StatusBadRequest)
 	} else {
 		json.NewEncoder(w).Encode(user)
 		w.WriteHeader(http.StatusCreated)
