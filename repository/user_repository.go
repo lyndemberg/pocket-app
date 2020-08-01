@@ -61,7 +61,8 @@ func (urepo UserRepository) FindByID(id int) (model.User, error) {
 		err := urepo.connection.QueryRow(query, id).Scan(&u.ID, &u.Name, &u.Email, &u.Username, &u.Password)
 
 		if err != nil {
-			return u, errors.New("User not found")
+			message := fmt.Sprintf("User not found with id = %s", id)
+			return u, &util.LogicError{message}
 		}
 
 		return u, nil
@@ -83,7 +84,7 @@ func (urepo UserRepository) Create(user model.User) (model.User, error) {
 			return urepo.FindByID(int(lastID))
 		}
 
-		return user, errors.New("Could not create user")
+		return user, &util.LogicError{"The user could not be created, check the field values"}
 	}
 
 	return user, errors.New("No connection with database")
@@ -102,7 +103,7 @@ func (urepo UserRepository) Update(user model.User) (model.User, error) {
 			return urepo.FindByID(int(lastID))
 		}
 
-		return user, errors.New("Could not update user")
+		return user, &util.LogicError{"The user could not be updated, check the field values"}
 	}
 
 	return user, errors.New("No connection with database")
@@ -121,7 +122,7 @@ func (urepo UserRepository) DeleteByID(id int) error {
 			return nil
 		}
 
-		return errors.New("Could not delete user")
+		return &util.LogicError{"The user could not be deleted, check id value"}
 	}
 
 	return errors.New("No connection with database")
@@ -136,7 +137,8 @@ func (urepo UserRepository) FindByUsername(username string) (model.User, error) 
 		err := urepo.connection.QueryRow(query, username).Scan(&u.ID, &u.Name, &u.Email, &u.Username, &u.Password)
 
 		if err != nil {
-			return u, fmt.Errorf("User not found with username = %s", username)
+			message := fmt.Sprintf("User not found with username = %s", username)
+			return u, &util.LogicError{message}
 		}
 
 		return u, nil

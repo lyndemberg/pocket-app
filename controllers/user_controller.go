@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	model "github.com/lyndemberg/pocket-app/models"
-	"github.com/lyndemberg/pocket-app/util"
+	"github.com/lyndemberg/pocket-app/security"
 
 	"github.com/gorilla/mux"
 	"github.com/lyndemberg/pocket-app/repository"
@@ -70,7 +70,7 @@ func (control UserController) userCreateAction(w http.ResponseWriter, r *http.Re
 	var userRequest model.User
 	json.NewDecoder(r.Body).Decode(&userRequest)
 
-	hashedPassword, errHashPassword := util.PasswordToHash(userRequest.Password)
+	hashedPassword, errHashPassword := security.PasswordToHash(userRequest.Password)
 	if errHashPassword != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Header().Add("error", "There was a problem processing the user registration")
