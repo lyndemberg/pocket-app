@@ -18,8 +18,9 @@ func AuthorizationMiddleware(next http.Handler) http.Handler {
 			_, err := verifyAuthorization(w, r)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusForbidden)
+			} else {
+				next.ServeHTTP(w, r)
 			}
-			next.ServeHTTP(w, r)
 		}
 	})
 }

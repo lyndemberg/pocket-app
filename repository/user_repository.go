@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	model "github.com/lyndemberg/pocket-app/models"
 	util "github.com/lyndemberg/pocket-app/util"
@@ -76,7 +77,8 @@ func (urepo UserRepository) Create(user model.User) (model.User, error) {
 	if urepo.connection != nil {
 		sqlInsert := "INSERT INTO users (name, email, username, password) VALUES (?, ?, ?, ?)"
 		result, err := urepo.connection.Exec(sqlInsert, user.Name, user.Email, user.Username, user.Password)
-
+		log.Println(result)
+		log.Println(err)
 		affects, err := result.RowsAffected()
 
 		if err == nil && int(affects) > 0 {
