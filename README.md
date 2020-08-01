@@ -16,7 +16,7 @@ Create a client application developed in react.js, to also develop my skills in 
 ```
 
 ### Endpoints
-Taking into account that pocket-app runs on port 8080, as described in [`main.go`](main.go). So the basic path is: `http://localhost:8080`.
+Taking into account that pocket-app runs on port 8080, as described in [`main.go`](main.go). So the base path is: `http://localhost:8080`.
 
 #### Users endpoint
 ```
