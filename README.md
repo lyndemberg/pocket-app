@@ -14,3 +14,45 @@ Create a client application developed in react.js, to also develop my skills in 
 - github.com/joho/godotenv
 - github.com/dgrijalva/jwt-go
 ```
+
+### Endpoints
+Taking into account that pocket-app runs on port 8080, as described in [`main.go`](main.go). So the basic path is: `http://localhost:8080`.
+
+#### Users endpoint
+```
+GET /api/users
+```
+```
+POST /api/users
+{
+    "name": "John Doe",
+    "email": "johndoe@gmail.com",
+    "username": "johndoe",
+    "password": "anypasswordhere"
+}
+```
+```
+PUT /api/users
+{
+    "id":   "453"
+    "name": "John Doe update",
+    "email": "johndoe71@gmail.com",
+    "username": "johndoe",
+    "password": "newpassword"
+}
+```
+```
+GET /api/users/{id}
+```
+```
+DELETE /api/users/{id}
+```
+
+#### Authentication endpoint
+```
+POST /login
+{
+    "username": "John Doe",
+    "password": "johndoe@gmail.com"
+}
+```

@@ -30,7 +30,7 @@ func (control UserController) Handle(subRouter *mux.Router) {
 	subRouter.HandleFunc("", control.userListAction).Methods("GET")
 	subRouter.HandleFunc("", control.userCreateAction).Methods("POST")
 	subRouter.HandleFunc("/{id}", control.userDetailsAction).Methods("GET")
-	subRouter.HandleFunc("/{id}", control.userUpdateAction).Methods("PUT")
+	subRouter.HandleFunc("", control.userUpdateAction).Methods("PUT")
 	subRouter.HandleFunc("/{id}", control.userDeleteAction).Methods("DELETE")
 }
 
